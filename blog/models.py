@@ -38,7 +38,7 @@ class Post(models.Model):
     body = models.TextField('Inhalt')
     image = models.ImageField('Beitragsbild', blank=True, upload_to='pictures/%Y/%m/%d')
     published = models.BooleanField('Veröffentlicht?', default=True)
-    categories = models.ManyToManyField(Category, default=0)
+    categories = models.ManyToManyField(Category)
 
     class Meta:
         ordering = ['-created']
