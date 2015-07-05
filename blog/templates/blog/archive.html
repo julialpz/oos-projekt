@@ -1,0 +1,37 @@
+{%  extends 'blog/base.html' %}
+
+{% load bootstrap3 %}
+{% bootstrap_messages %}
+{% load blog_extras %}
+
+{% block title %}
+    {{ page.title }}
+{%  endblock %}
+
+{% block nav-admin %}
+    <li><small><a href="{% url 'admin:blog_post_add' %}">Beitrag hinzufügen</a></small></li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2>{{ page.title }}</h2>
+            {% for y, m in archive_list.items %}
+                {% for m, posts in m.items %}
+                    <h3><a href="{% url 'blog:month' year=y month=m %}">{{ m|month_name }} {{ y }}</a></h3>
+                    {% for p in posts %}
+                        <ul>
+                            <li><h4><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></h4>
+                                <ul class="list-inline">
+                                    <li>{{ p.get_author }}</li>
+                                    <li class="meta-div"><a href="{{ p.get_absolute_url }}{% if p.comment_set.all.count > 0 %}#comments{% else %}#respond{% endif %}">
+                                        {{ p.comment_set.all.count }} Kommentar{{ p.comment_set.all|pluralize:'e' }}
+                                    </a></li>
+                            </ul></li>
+                        </ul>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

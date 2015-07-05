@@ -1,0 +1,81 @@
+{% load bootstrap3 %}
+{% bootstrap_messages %}
+
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head lang="de">
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} | {{ brand }}</title>
+    {% bootstrap_css %}
+    <!-- With some customizations -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    {% bootstrap_javascript %}
+</head>
+<body>
+
+    <!-- BEGIN ADMIN NAV BAR -->
+    <div class="nav-admin">
+        <ul class="list-inline">
+            <li><small>{% if user.is_authenticated %}Hallo <a href="{% url 'admin:auth_user_change' user.id %}">{{ user.username }}</a>!</small></li>
+            <li><small><a href="{% url 'admin:logout' %}">Ausloggen{% else %}<a href="{% url 'admin:index' %}">Einloggen{% endif %}</a></small></li>
+            {% if user.is_staff %}
+            <li><small><a href="{% url 'admin:index' %}">Administration</a></small></li>
+            {% block nav-admin %}{% endblock %}
+            {% endif %}
+        </ul>
+    </div>
+    <!-- END ADMIN NAV BAR -->
+
+    <!-- BEGIN MAIN NAV BAR -->
+    <nav role="navigation" class="navbar navbar-default">
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="{% url 'blog:index' %}">Blog</a></li>
+                {% for p in pages %}
+                    {% if p.rank %}
+                        <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <form action="{% url 'blog:search' %}" method="POST" class="navbar-form navbar-right">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="query" placeholder="Suchen" class="form-control">
+                </div>
+            </form>
+        </div>
+    </nav>
+    <!-- END MAIN NAV BAR -->
+
+    <div class="container">
+
+        <header class="page-header">
+            <h1><span class="r-arrow">&#10171;</span>{{ brand }}<span class="l-arrow">&#10171;</span></h1>
+        </header>
+
+        <main>
+        {% block content %}
+        {% endblock %}
+        </main>
+
+        <footer class="footer-main">
+            <p>&copy; {% now 'Y' %} Julia Wallmüller &mdash; <a href="{% url 'blog:page' slug='impressum' %}">Impressum</a></p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

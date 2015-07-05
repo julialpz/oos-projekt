@@ -1,0 +1,9 @@
+{% load blog_extras %}
+<div class="categories-widget">
+    <h4>Kategorien</h4>
+    <ul class="list-unstyled">
+        {% for c in categories %}
+            <li><a href="{{ c.get_absolute_url }}">{{ c.name }}</a> ({{ c.post_set.count }})</li>
+        {% endfor %}
+    </ul>
+</div>

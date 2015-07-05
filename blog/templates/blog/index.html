@@ -1,0 +1,71 @@
+{% extends "blog/base.html" %}
+
+{% load bootstrap3 %}
+{% bootstrap_messages %}
+{% load thumbnail %}
+
+{% block title %}
+     {{ title }}
+{%  endblock %}
+
+{% block nav-admin %}
+    <li><small><a href="{% url 'admin:blog_post_add' %}">Beitrag hinzufügen</a></small></li>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+    {% for post in posts %}
+    <article class="col-sm-6 col-md-4">
+        {% if post.image %}
+        <img class="img-responsive img-thumbnail" src="{% thumbnail post.image 400x200 crop %}" />
+        {% endif %}
+        <header>
+            <h3>
+                <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+            </h3>
+            <ul class="list-inline">
+                <li><time datetime="{{ post.created|date:'r' }}">{{ post.created|date:'j. F Y' }}</time></li>
+                <li class="meta-div"><a href="{{ post.get_absolute_url }}{% if post.comment_set.all.count > 0 %}#comments{% else %}#respond{% endif %}">
+                    {{ post.comment_set.all.count }} Kommentar{{ post.comment_set.all|pluralize:'e' }}
+                </a></li>
+            </ul>
+        </header>
+        <p>{{ post.body|striptags|truncatewords:30 }}</p>
+        <p><a href="{{ post.get_absolute_url }}">Weiter lesen &raquo;</a></p>
+    </article>
+        {% if forloop.counter == 3 %}
+            <div class="clearfix visible-md-block visible-lg-block"></div>
+        {% elif forloop.counter == 2 or forloop.counter == 4 %}
+            <div class="clearfix visible-sm-block"></div>
+        {% endif %}
+    {% empty %}
+        <p>Es sind keine Beiträge vorhanden.</p>
+    {% endfor %}
+    </div>
+
+    {% if posts.object_list and posts.paginator.num_pages > 1 %}
+    <div class="pagination-wrapper">
+        <ul class="pagination">
+        {% if posts.has_previous %}
+            <li><a  href="?page={{ posts.previous_page_number }}"><span>&laquo;</span></a></li>
+        {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for p in posts.paginator.page_range %}
+            {% if p ==  posts.number %}
+                <li class="active"><span>{{ p }}</span></li>
+            {% else %}
+                <li><a href="?page={{ p }}">{{ p }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if posts.has_next %}
+            <li><a  href="?page={{ posts.next_page_number }}"><span>&raquo;</span></a></li>
+        {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+{% endblock %}

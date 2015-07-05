@@ -1,0 +1,73 @@
+{%  extends 'blog/base.html' %}
+
+{% load bootstrap3 %}
+{% bootstrap_messages %}
+
+{% block title %}
+    {{ post.title }}
+{%  endblock %}
+
+{% block nav-admin %}
+    <li><small><a href="{% url 'admin:blog_post_change' post.id %}">Beitrag bearbeiten</a></small></li>
+{% endblock %}
+
+{% block content %}
+<ul class="list-inline">
+    <li><a href="{% url 'blog:index' %}">&laquo; Zurück zur Übersicht</a></li>
+</ul>
+<div class="row">
+    <div class="col-md-9 col-lg-8">
+        <article>
+            <header>
+                <img class="center-block img-responsive img-rounded" src="{{ post.image.url }}" />
+                <h2>{{ post.title }}</h2>
+                <ul class="list-inline">
+                    <li>{{ post.get_author }}</li>
+                    <li class="meta-div text-muted"><time datetime="{{ post.created|date:'r' }}">
+                        {{ post.created|date:'l, j. F Y' }}
+                    </time></li>
+                </ul>
+            </header>
+            {{post.body|safe}}
+            <footer class="footer-post">Veröffentlicht in: {% for c in post.categories.all %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% if forloop.counter != post.categories.all.count %}, {% endif %}{% endfor %}</footer>
+        </article>
+        {% if comments %}
+            <hr />
+            <h3 id="comments">{{ comments.count }} Kommentar{{ comments|pluralize:'e' }}</h3>
+
+            {% for comment in comments %}
+            <div class="comment">
+            {% if comment.homepage %}
+
+            {% endif %}
+                <div class="gravatar"><img class="img-circle" src="http://www.gravatar.com/avatar/{{ comment.gravatar_hash }}" /></div>
+                <h4>
+                {% if comment.url %}
+                    <a href="{{ comment.url }}">{{ comment.author }}</a>
+                {% else %}
+                    {{ comment.author }}
+                {% endif %}</h4>
+                <p>{{ comment.body|linebreaks }}</p>
+                <ul class="list-inline">
+                    <li><time datetime="{{ comment.created|date:'r' }}"><small class="text-muted">{{ comment.created|date:'j. F Y' }}</small></time></li>
+                </ul>
+            </div>
+        {% endfor %}
+        {% endif %}
+        <hr />
+        <h3 id="respond">Kommentar verfassen:</h3>
+        {% include 'blog/inserts/crispy_form.html' %}
+    </div>
+    <div class="col-md-3 col-lg-4">
+        <aside>
+            <section>
+                {% include 'blog/inserts/widget-archive.html' %}
+            </section>
+            <hr />
+            <section>
+                {% include 'blog/inserts/widget-categories.html' %}
+            </section>
+        </aside>
+    </div>
+</div>
+{% endblock %}

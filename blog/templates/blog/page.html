@@ -1,0 +1,21 @@
+{%  extends 'blog/base.html' %}
+
+{% load bootstrap3 %}
+{% bootstrap_messages %}
+
+{% block title %}
+    {{ page.title }}
+{%  endblock %}
+
+{% block nav-admin %}
+    <li><small><a href="{% url 'admin:blog_page_change' page.id %}">Seite bearbeiten</a></small></li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <h2>{{ page.title }}</h2>
+            {{ page.body|safe }}
+        </div>
+    </div>
+{% endblock %}

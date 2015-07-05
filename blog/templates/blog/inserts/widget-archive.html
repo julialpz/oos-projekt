@@ -1,0 +1,22 @@
+{% load blog_extras %}
+<div class="archive-widget">
+    <h4>Archiv</h4>
+    <ul class="list-unstyled">
+        {% for y, m in archive_list.items %}
+        <li>
+            <a data-toggle="collapse" href="#collapse{{ y }}" aria-expanded="false" aria-controls="collapse{{ y }}">{{ y }} <b class="caret"></b></a>
+            <ul class="collapse" id="collapse{{ y }}">
+                {% for m, posts in m.items %}
+                <li><a data-toggle="collapse" href="#collapse{{ y }}-{{ m }}" aria-expanded="false" aria-controls="collapse{{ y }}-{{ m }}">{{ m|month_name }} <b class="caret"></b></a>
+                    <ul class="collapse" id="collapse{{ y }}-{{ m }}">
+                        {% for p in posts %}
+                            <li><a href="{{ p.get_absolute_url }}">{{ p.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
