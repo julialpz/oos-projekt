@@ -5,6 +5,7 @@ __author__ = 'Julia Wallmüller'
 
 import hashlib
 
+from collections import OrderedDict
 from django.core.context_processors import csrf
 from django.core.mail import send_mail, BadHeaderError
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
@@ -31,10 +32,11 @@ def get_published_posts():
     return Post.objects.filter(published=True)
 
 
-# returns a dictionary with all currently published posts, schema: {'year': {'month': [posts]}}
+# returns an ordered dictionary with all currently published posts in descending order
+# schema: {'year': {'month': [posts]}}
 def mk_archive_list():
     posts = get_published_posts()
-    archive_list = {}
+    archive_list = OrderedDict()
 
     for p in posts:
         year = p.created.year
